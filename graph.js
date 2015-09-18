@@ -40,11 +40,8 @@ function barChartPlotter(e) {
 	return 'rgba(' + color.r + ',' + color.g + ',' + color.b + ', .7)';
   }
 
-data_request = function(){
+data_request = function(url, div_id){
 	var xmlhttp = new XMLHttpRequest();
-	var startDate = "2012-01-01", endDate = "2012-03-13";
-	var url = "https://query.yahooapis.com/v1/public/yql?env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json&q=select%20*%20from%20yahoo.finance.historicaldata%20where%20startDate=%27"+startDate+"%27%20and%20endDate=%27"+endDate+"%27%20and%20symbol=%27YHOO%27";
-	//var url = "example.json"
 
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -58,7 +55,7 @@ data_request = function(){
 			results.quote.forEach(function(e){data_arr.unshift(
 				[new Date(e.Date), [e.Low, e.Close, e.High], [0, e.Volume*1.0, 0]]
 						)});
-			graph_create(data_arr);
+			graph_create(data_arr, div_id);
 		}
 	}
 	xmlhttp.open("GET", url, true);
@@ -66,13 +63,13 @@ data_request = function(){
 }
 
   
-graph_create = function(data){
+graph_create = function(data, div_id){
 	var date_to = new Date(data[0][0]), date_from = new Date(data[data.length-1][0]);
 	date_from.setDate(date_from.getDate() - 1);
 	date_to.setDate(date_to.getDate() + 1);
 
 	g = new Dygraph(
-		document.getElementById("graphdiv"),  // containing div
+		document.getElementById(div_id),  // containing div
 		data,
 		{
 			showRangeSelector: true,			
@@ -106,4 +103,4 @@ graph_create = function(data){
 		}                                   // the options
 );
 }
-window.onload = data_request;
+window.onload = function(){data_request('http://query.yahooapis.com/v1/public/yql?env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json&q=select%20*%20from%20yahoo.finance.historicaldata%20where%20startDate=%272014-01-01%27%20and%20endDate=%272014-01-10%27%20and%20symbol=%27YHOO%27', 'graphdiv');};
