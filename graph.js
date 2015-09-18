@@ -42,15 +42,21 @@ function barChartPlotter(e) {
 
 data_request = function(){
 	var xmlhttp = new XMLHttpRequest();
-	//var url = "https://query.yahooapis.com/v1/public/yql?env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json&q=select%20*%20from%20yahoo.finance.historicaldata%20where%20startDate=%272014-01-01%27%20and%20endDate=%272014-01-10%27%20and%20symbol=%27YHOO%27";
-	var url = "example.json"
+	var startDate = "2012-01-01", endDate = "2012-03-13";
+	var url = "https://query.yahooapis.com/v1/public/yql?env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json&q=select%20*%20from%20yahoo.finance.historicaldata%20where%20startDate=%27"+startDate+"%27%20and%20endDate=%27"+endDate+"%27%20and%20symbol=%27YHOO%27";
+	//var url = "example.json"
 
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			var data_json = JSON.parse(xmlhttp.responseText);
 			var data_arr = [];
-			data_json.query.results.quote.forEach(function(e){data_arr.push(
-				[new Date(e.Date), [0, e.Volume*1.0, 0], [e.Low, e.Close, e.High]]
+			var results = data_json.query.results;
+			if (!results) {
+				console.log("Yahoo gave an empty answer.");
+				return;
+			}
+			results.quote.forEach(function(e){data_arr.unshift(
+				[new Date(e.Date), [e.Low, e.Close, e.High], [0, e.Volume*1.0, 0]]
 						)});
 			graph_create(data_arr);
 		}
@@ -66,14 +72,20 @@ graph_create = function(data){
 	date_to.setDate(date_to.getDate() + 1);
 
 	g = new Dygraph(
-	document.getElementById("graphdiv"),  // containing div
+		document.getElementById("graphdiv"),  // containing div
 		data,
 		{
-			"labels": ["date", "volume", "price"],
+			showRangeSelector: true,			
+			labels: ["date", "price", "volume"],
+			legend: "always",
 			customBars: true,
             errorBars: true,
 			dateWindow: [ date_from.getTime(), date_to.getTime() ],
 			series: {
+				"price":{
+					showInRangeSelector: true,
+					//axis: "y1"
+				},
 				"volume":{
 					plotter: barChartPlotter,
 					axis: "y2"
@@ -90,8 +102,7 @@ graph_create = function(data){
             },
             ylabel: 'YHOO price',
             y2label: 'day volume',
-			
-
+            rangeSelectorHeight: 40,
 		}                                   // the options
 );
 }
