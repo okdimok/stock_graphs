@@ -16,7 +16,7 @@ function barChartPlotter(e) {
 		var sep = points[i].canvasx - points[i - 1].canvasx;
 		if (sep < min_sep) min_sep = sep;
 	}
-	var bar_width = Math.floor(0.5 / 3 * min_sep); //was 2.0 divided by smth
+	var bar_width = Math.floor(.6 * min_sep); //was 2.0 divided by smth
 
 	// Do the actual plotting.
 	for (var i = 0; i < points.length; i++) {
@@ -80,11 +80,11 @@ graph_create = function(data){
 			legend: "always",
 			customBars: true,
             errorBars: true,
-			dateWindow: [ date_from.getTime(), date_to.getTime() ],
+			//dateWindow: [ date_from.getTime(), date_to.getTime() ],
 			series: {
 				"price":{
 					showInRangeSelector: true,
-					//axis: "y1"
+					axis: "y1"
 				},
 				"volume":{
 					plotter: barChartPlotter,
