@@ -96,7 +96,7 @@ graph_create = function(data){
 	        axes: {
               y2: {
                 // set axis-related properties here
-                //labelsKMB: true
+                labelsKMB: true,
 				axisLabelWidth: 70,
               }
             },
