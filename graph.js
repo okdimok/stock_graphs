@@ -72,7 +72,7 @@ graph_create = function(data){
 			"labels": ["date", "volume", "price"],
 			customBars: true,
             errorBars: true,
-			dateWindow: [ date_from, date_to ],
+			dateWindow: [ date_from.getTime(), date_to.getTime() ],
 			series: {
 				"volume":{
 					plotter: barChartPlotter,
